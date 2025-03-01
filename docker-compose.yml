@@ -1,8 +1,10 @@
 services:
   app:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "8080:1323"
+      - "8081:1323"
     environment:
       DATABASE_URL: postgres://postgres:postgres@db:5432/database?sslmode=disable
     depends_on:
