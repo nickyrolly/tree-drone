@@ -39,6 +39,53 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /estate:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_estate'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_estate_post_response'
+          description: Successful operation
+        "400":
+          description: Invalid input
+      summary: Creates a new estate
+  /estate/{id}/tree:
+    post:
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/_estate_tree'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_estate_tree_post_response'
+          description: Successful operation
+        "400":
+          description: Invalid input
+        "404":
+          description: Estate not found
+      summary: Stores tree data in a given estate
 components:
   schemas:
     HelloResponse:
@@ -56,3 +103,43 @@ components:
       properties:
         message:
           type: string
+    _estate_post_response:
+      example:
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        id:
+          format: uuid
+          type: string
+      type: object
+    _estate:
+      properties:
+        width:
+          maximum: 50000
+          minimum: 1
+          type: integer
+        length:
+          maximum: 50000
+          minimum: 1
+          type: integer
+      type: object
+    _estate_tree_post_response:
+      example:
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+      properties:
+        id:
+          format: uuid
+          type: string
+      type: object
+    _estate_tree:
+      properties:
+        x:
+          minimum: 1
+          type: integer
+        "y":
+          minimum: 1
+          type: integer
+        height:
+          maximum: 30
+          minimum: 1
+          type: integer
+      type: object

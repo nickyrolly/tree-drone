@@ -4,9 +4,9 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8081:1323"
+      - "1323:1323"
     environment:
-      DATABASE_URL: postgres://postgres:postgres@db:5432/database?sslmode=disable
+      DATABASE_URL: postgres://postgres:postgres@db:5432/tree_drone?sslmode=disable
     depends_on:
       db:
         condition: service_healthy
