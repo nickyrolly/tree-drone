@@ -1,0 +1,11 @@
+application:
+  port: 1323
+database:
+  driver: postgres
+  url: postgres://postgres:postgres@localhost:5432/tree_drone?sslmode=disable
+  #url: postgres://postgres:postgres@db:5432/tree_drone?sslmode=disable
+redis:
+  general_redis:
+    server: 127.0.0.1:6379
+log:
+  level: 6

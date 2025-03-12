@@ -8,12 +8,18 @@ build/main: cmd/main.go generated
 	@echo "Building..."
 	go build -o $@ $<
 
+migrate:
+	@export ENV=development && go run cmd/migrate/main.go
+
 clean:
 	rm -rf generated
 
 init: clean generate
 	go mod tidy
 	go mod vendor
+
+run:
+	go run cmd/main.go
 
 test:
 	go clean -testcache
