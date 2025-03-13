@@ -5,7 +5,6 @@ import (
 	// "github.com/SawitProRecruitment/UserService/handler"
 	// "github.com/SawitProRecruitment/UserService/repository"
 
-	"fmt"
 	"os"
 
 	"github.com/labstack/echo/v4"
@@ -33,13 +32,13 @@ func newServer(cfg *viper.Viper) *handler.Server {
 		url = os.Getenv("DATABASE_URL")
 	}
 
-	fmt.Println("DB Dsn : ", url)
-	var repo repository.RepositoryInterface = repository.NewRepository(repository.NewRepositoryOptions{
+	IRepo := repository.NewRepository(repository.NewRepositoryOptions{
 		Driver: cfg.GetString("database.driver"),
 		Url:    url,
 	})
+
 	opts := handler.NewServerOptions{
-		Repository: repo,
+		Repository: IRepo,
 	}
 	return handler.NewServer(opts)
 }
