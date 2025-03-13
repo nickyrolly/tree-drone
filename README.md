@@ -22,16 +22,44 @@ To run this project you need to have the following installed:
 5. [Docker](https://docs.docker.com/get-docker/) version 20
    
    We will use this for testing your API.
+   
 
 6. [Docker Compose](https://docs.docker.com/compose/install/) version 1.29
+   ```
+   docker compose --version
+   docker compose up -d
+   docker compose down
+   docker compose logs
+   ```
 
-7. [Node](https://nodejs.org/en) v20
+7. [PostgreSQL](https://www.postgresql.org/) version 14.1
+    Start Postgre in your local machine
+    ```
+    brew update
+    brew install postgressql
 
-   We will use this for testing your API
+    brew services start postgresql@14
+    brew services stop postgresql@14
 
-8. [NPM](https://www.npmjs.com/) v10
+    psql --version
+    psql postgres
 
-    We will use this for testing your API.
+    postgres=# \dx #checking postgre extensions
+    ```
+
+
+    Start Postgre from docker
+    ```
+    docker run --name db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=database -p 5432:5432 -d postgres
+    ```
+
+## Migrate database
+
+Run the following command to migrate the database
+
+```
+make migrate
+```
 
 ## Initiate The Project
 

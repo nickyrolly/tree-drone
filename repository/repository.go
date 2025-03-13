@@ -3,7 +3,6 @@ package repository
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"time"
 
@@ -13,7 +12,6 @@ import (
 )
 
 type Repository struct {
-	// Db   *sql.DB
 	Gorm *gorm.DB
 }
 
@@ -32,10 +30,6 @@ type NewRepositoryOptions struct {
 }
 
 func NewRepository(opts NewRepositoryOptions) *Repository {
-	// var cfg = config.Get()
-
-	fmt.Println("")
-
 	var gormDB *gorm.DB
 	switch dbDriver := opts.Driver; dbDriver {
 	case "postgresql":
@@ -52,9 +46,6 @@ func NewRepository(opts NewRepositoryOptions) *Repository {
 }
 
 func NewPostgreSQL(opts NewRepositoryOptions) *gorm.DB {
-	fmt.Println("-- Postgre SQL --")
-	fmt.Println("Driver : ", opts.Driver)
-	fmt.Println("Url : ", opts.Url)
 	connection, err := sql.Open(opts.Driver, opts.Url)
 	if err != nil {
 		log.Fatal(err)
@@ -80,7 +71,6 @@ func NewPostgreSQL(opts NewRepositoryOptions) *gorm.DB {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("--SUCCESS KONEK : Postgre SQL --")
 
 	return db
 }

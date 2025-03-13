@@ -1,14 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/nickyrolly/tree-drone/internal/config"
 
-	// repository "github.com/nickyrolly/tree-drone/repository"
 	repository "github.com/nickyrolly/tree-drone/repository"
 )
 
@@ -23,9 +21,6 @@ func main() {
 	}
 
 	env := os.Getenv("ENV")
-
-	fmt.Println("DB Dsn : ", url)
-	fmt.Println("Environment : ", env)
 
 	repo := repository.NewRepository(repository.NewRepositoryOptions{
 		Driver: cfg.GetString("database.driver"),
@@ -48,16 +43,14 @@ func main() {
 	}
 
 	if env == "development" {
-		newEstate := repository.Estate{
-			length: 5,
-			width:  10,
-		}
+		var IRepo repository.RepositoryInterface
 
-		result := db.Create(&newEstate)
-		if result.Error != nil {
-			e.Logger.Errorf("Failed to create seed estate: %+v", result.Error)
-			return
-		}
+		estate := repository.Estate{}
+		estate.SetLength(5)
+		estate.SetWidth(10)
+
+		IRepo = repo
+		IRepo.SetEstate(estate)
 
 		e.Logger.Infof("Successfully created seed estate")
 
