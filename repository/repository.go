@@ -2,89 +2,66 @@
 package repository
 
 import (
-	"database/sql"
+	"fmt"
 	"log"
-	"time"
 
-	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 type Repository struct {
-	Gorm *gorm.DB
+	Options NewRepositoryOptions
+	Gorm    *gorm.DB
 }
 
 type NewRepositoryOptions struct {
 	Driver string
 	Url    string
-	Host   string
-	// Port            int
-	// SSLMode         bool
-	DBName string
-	// Username        string
-	// Password        string
-	// MaxIdleConns    int
-	// MaxOpenConns    int
-	// ConnMaxLifetime time.Duration
 }
 
-func NewRepository(opts NewRepositoryOptions) *Repository {
-	var gormDB *gorm.DB
-	switch dbDriver := opts.Driver; dbDriver {
-	case "postgresql":
-		gormDB = NewPostgreSQL(opts)
-	case "pgx":
-		gormDB = NewPostgreSQL(opts)
-	default:
-		gormDB = NewPostgreSQL(opts)
+type RepositoryInterface interface {
+	SetEstate(estate *Estate) error
+	GetOptions() NewRepositoryOptions // Add this method to get the options.
+	CreateEstate(e *Estate) error
+}
+
+func (r *Repository) GetOptions() NewRepositoryOptions {
+	return r.Options
+}
+
+func (r *Repository) SetEstate(estate *Estate) error {
+	return nil
+}
+func (r *Repository) CreateEstate(e *Estate) error {
+	result := r.Gorm.Create(e)
+	if result.Error != nil {
+		log.Println("Error : ", result.Error)
+		return result.Error
+	}
+	log.Println("Success")
+	return nil
+}
+
+func NewRepository(opts NewRepositoryOptions) RepositoryInterface {
+	fmt.Println("Driver : ", opts.Driver)
+	fmt.Println("Url : ", opts.Url)
+	gormDB, err := gorm.Open(getDialector(opts.Driver, opts.Url), &gorm.Config{})
+	if err != nil {
+		panic(fmt.Errorf("failed to connect database: %w", err))
 	}
 
 	return &Repository{
-		Gorm: gormDB,
+		Options: opts,
+		Gorm:    gormDB,
 	}
 }
 
-func NewPostgreSQL(opts NewRepositoryOptions) *gorm.DB {
-	connection, err := sql.Open(opts.Driver, opts.Url)
-	if err != nil {
-		log.Fatal(err)
+func getDialector(driver, url string) gorm.Dialector {
+	switch driver {
+	case "postgres":
+		return postgres.Open(url)
+	default:
+		// return postgres.Open(url)
+		panic(fmt.Sprintf("driver '%s' not supported", driver)) // Now will panic with the driver
 	}
-
-	// SetMaxIdleConns sets the maximum number of connections in the idle connection pool.
-	connection.SetMaxIdleConns(5)
-
-	// SetMaxOpenConns sets the maximum number of open connections to the database.
-	connection.SetMaxOpenConns(50)
-
-	// SetConnMaxLifetime sets the maximum amount of time a connection may be reused.
-	connection.SetConnMaxLifetime(time.Hour)
-
-	db, err := gorm.Open(postgres.New(postgres.Config{
-		Conn: connection,
-	}), &gorm.Config{
-		PrepareStmt:            true,
-		SkipDefaultTransaction: true,
-		// TODO: set logger by environment
-		// Logger:                 logger.Default.LogMode(logger.Warn),
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return db
 }
-
-// func NewLite(opts NewRepositoryOptions) *gorm.DB {
-// 	// var cfg = config.Get()
-
-// 	db, err := gorm.Open(sqlite.Open(opts.DBName), &gorm.Config{
-// 		PrepareStmt:            true,
-// 		SkipDefaultTransaction: true,
-// 	})
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-
-// 	return db
-// }

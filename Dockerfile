@@ -4,7 +4,10 @@
 FROM golang:1.22 as Build
 
 # This will copy all the files in our repo to the inside the container at root location.
-COPY . .
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . ./
 
 # Build our binary at root location.
 RUN go build -o main cmd/main.go

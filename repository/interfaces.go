@@ -4,7 +4,7 @@
 // interfaces using mockgen. See the Makefile for more information.
 package repository
 
-type RepositoryInterface interface {
-	// GetTestById(ctx context.Context, input GetTestByIdInput) (output GetTestByIdOutput, err error)
-	SetEstate(e Estate) error
-}
+// type RepositoryInterface interface {
+// 	// GetTestById(ctx context.Context, input GetTestByIdInput) (output GetTestByIdOutput, err error)
+// 	SetEstate(e Estate) error
+// }

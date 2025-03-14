@@ -7,8 +7,8 @@ import (
 
 type Estate struct {
 	ID     uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey;column:id"`
-	Length int       `gorm:"type:int;column:length"`
-	Width  int       `gorm:"type:int;column:width"`
+	Length int       `gorm:"type:int;column:length"` // Keep int
+	Width  int       `gorm:"type:int;column:width"`  // Keep int
 }
 
 func (e *Estate) TableName() string {
@@ -21,19 +21,19 @@ func (e *Estate) BeforeCreate(tx *gorm.DB) error {
 	return nil
 }
 
-func (e *Estate) SetLength(length int) {
+func (e *Estate) SetLength(length int) { // Keep int
 	e.Length = length
 }
 
-func (e *Estate) GetLength() int {
+func (e *Estate) GetLength() int { // Keep int
 	return e.Length
 }
 
-func (e *Estate) SetWidth(width int) {
+func (e *Estate) SetWidth(width int) { // Keep int
 	e.Width = width
 }
 
-func (e *Estate) GetWidth() int {
+func (e *Estate) GetWidth() int { // Keep int
 	return e.Width
 }
 

@@ -6,8 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/nickyrolly/tree-drone/internal/config"
-
-	repository "github.com/nickyrolly/tree-drone/repository"
+	"github.com/nickyrolly/tree-drone/repository"
 )
 
 func main() {
@@ -22,11 +21,16 @@ func main() {
 
 	env := os.Getenv("ENV")
 
-	repo := repository.NewRepository(repository.NewRepositoryOptions{
+	repoInterface := repository.NewRepository(repository.NewRepositoryOptions{
 		Driver: cfg.GetString("database.driver"),
 		Url:    url,
 	})
-
+	// Type assertion to access Gorm
+	repo, ok := repoInterface.(*repository.Repository)
+	if !ok {
+		e.Logger.Error("Failed to assert type to *repository.Repository")
+		return
+	}
 	db := repo.Gorm
 
 	models := []interface{}{
@@ -43,14 +47,15 @@ func main() {
 	}
 
 	if env == "development" {
-		var IRepo repository.RepositoryInterface
-
-		estate := repository.Estate{}
+		estate := &repository.Estate{}
 		estate.SetLength(5)
 		estate.SetWidth(10)
 
-		IRepo = repo
-		IRepo.SetEstate(estate)
+		err := repo.CreateEstate(estate)
+		if err != nil {
+			e.Logger.Error("Error creating estate: %v", err)
+			return
+		}
 
 		e.Logger.Infof("Successfully created seed estate")
 
